@@ -1,0 +1,15 @@
+server:
+  port: 8030
+#  应用名称
+spring:
+  application:
+    name: comment
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    name: defaultDataSource
+    url: jdbc:mysql://localhost/shixun?serverTimezone=GMT%2B8
+    username: root
+    password: root
+
+
+
