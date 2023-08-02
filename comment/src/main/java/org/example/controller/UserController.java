@@ -25,7 +25,6 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        Result.error()
         return userRepository.findAll();
     }
 
