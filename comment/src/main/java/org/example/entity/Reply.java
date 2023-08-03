@@ -20,7 +20,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "comment")
-public class Comment {
+public class Reply {
 
 
 
@@ -28,8 +28,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
-    private Integer shopId;
-    private String commentLevel;
+    private Integer commentLevel;
     private String createTime;
     private String commentTime;
     private String updateTime;
@@ -40,16 +39,12 @@ public class Comment {
 
     private String commentText;
     private Integer commentLike;
-    private String commentGrade;
     private Integer commentIdentify;
-
-    @OneToMany(mappedBy = "parentComment")
-    private List<Reply> replyList;
-
     private Integer parentComment;
 
-
-    private Integer ReplyId;
+    @OneToOne
+    @JoinColumn(name = "commentId")
+    private Reply1 toReply;
 
     @JsonRawValue
     private String commentPicture;
