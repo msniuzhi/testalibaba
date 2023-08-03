@@ -2,28 +2,33 @@ package org.example.controller;
 
 
 import org.example.Repository.CommentRepository;
+import org.example.Repository.CommentSetRepository;
 import org.example.Repository.ReplyRepository;
 import org.example.entity.Comment;
-import org.example.entity.Reply;
+import org.example.entity.CommentSet;
 import org.example.entity.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static java.time.LocalDate.now;
+
 
 @RestController
 @RequestMapping("/comment")
 public class CommentController {
 
     private final CommentRepository commentRepository;
+    private final CommentSetRepository commentSetRepository;
     private final ReplyRepository replyRepository;
 
     @Autowired
-    public CommentController(CommentRepository commentRepository, ReplyRepository replyRepository) {
+    public CommentController(CommentRepository commentRepository, CommentSetRepository commentSetRepository, ReplyRepository replyRepository) {
         this.commentRepository = commentRepository;
+        this.commentSetRepository = commentSetRepository;
         this.replyRepository = replyRepository;
     }
 
@@ -35,8 +40,6 @@ public class CommentController {
         return Result.success(comments);
     }
 
-
-
     @RequestMapping("/listcomment/{ShopId}")
     public Result<?> getCommentByShopId(@PathVariable Long ShopId) {
 
@@ -47,7 +50,53 @@ public class CommentController {
         return Result.success(comments);
     }
 
+    @RequestMapping("/savecomment")
+    public Result<?> savecomment(@RequestBody CommentSet commentSet) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedNow = now.format(formatter);
 
+
+        commentSet.setCommentTime(formattedNow);
+      commentSet.setUpdateTime(formattedNow);
+      commentSet.setCreateTime(formattedNow);
+        commentSet.setCommentLike(0);
+        commentSet.setCommentIdentify(1);
+
+
+
+
+     commentSetRepository.save(commentSet);
+
+       return Result.success();
+    }
+
+    @RequestMapping("/delete/{commentId}")
+    public Result<?> deleteCommentById(@PathVariable Long commentId) {
+        Comment comments = commentRepository.findByCommentId(commentId);
+
+        Integer id = Math.toIntExact(commentId);
+        if(null == comments){
+            return Result.error("2","id不存在");
+        }else{
+            commentRepository.deleteById(id);
+        }
+        return Result.success();
+    }
+
+    @RequestMapping("/updatecomment")
+    public Result<?> updatecomment(@RequestBody CommentSet commentSet) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedNow = now.format(formatter);
+
+        commentSet.setUpdateTime(formattedNow);
+
+
+        commentSetRepository.save(commentSet);
+
+        return Result.success();
+    }
 
 
 }

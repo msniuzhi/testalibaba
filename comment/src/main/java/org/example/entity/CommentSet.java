@@ -2,26 +2,19 @@ package org.example.entity;
 
 
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.tomcat.util.json.JSONParser;
 
-
+import java.time.LocalTime;
 import java.util.List;
-
 
 
 @Entity
 @Data
 @Table(name = "comment")
-public class Comment {
-
+public class CommentSet {
 
     public Integer getCommentId() {
         return commentId;
@@ -47,36 +40,14 @@ public class Comment {
         this.commentLevel = commentLevel;
     }
 
-    public String getCreateTime() {
-        return createTime;
+
+
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getCommentTime() {
-        return commentTime;
-    }
-
-    public void setCommentTime(String commentTime) {
-        this.commentTime = commentTime;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getCommentText() {
@@ -103,20 +74,14 @@ public class Comment {
         this.commentGrade = commentGrade;
     }
 
+
+
     public Integer getCommentIdentify() {
         return commentIdentify;
     }
 
     public void setCommentIdentify(Integer commentIdentify) {
         this.commentIdentify = commentIdentify;
-    }
-
-    public List<Reply> getReplyList() {
-        return replyList;
-    }
-
-    public void setReplyList(List<Reply> replyList) {
-        this.replyList = replyList;
     }
 
     public Integer getParentComment() {
@@ -135,43 +100,36 @@ public class Comment {
         ReplyId = replyId;
     }
 
-    public String getCommentPicture() {
-        return commentPicture;
-    }
-
-    public void setCommentPicture(String commentPicture) {
-        this.commentPicture = commentPicture;
-    }
-
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
+
+
+
+
+
+
+
     private Integer shopId;
     private String commentLevel;
-    private String createTime;
     private String commentTime;
-    private String updateTime;
-
-    @OneToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
+    private Integer userId;
     private String commentText;
     private Integer commentLike;
     private String commentGrade;
+
+
+    @Convert(converter = ListToJsonConverter.class)
+    @Column(columnDefinition = "text")
+    private List<String> commentPicture;
     private Integer commentIdentify;
-
-    @OneToMany(mappedBy = "parentComment")
-    private List<Reply> replyList;
-
     private Integer parentComment;
-
-
     private Integer ReplyId;
 
-    @JsonRawValue
-    private String commentPicture;
+
+    private String createTime;
+    private String updateTime;
 
 }
