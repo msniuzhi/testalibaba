@@ -28,7 +28,6 @@ public class Reply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer commentId;
-    private Integer commentLevel;
     private String createTime;
     private String commentTime;
     private String updateTime;
@@ -37,9 +36,14 @@ public class Reply {
     @JoinColumn(name = "userId")
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "businessId")
+    private Business business;
+
+
+
     private String commentText;
     private Integer commentLike;
-    private Integer commentIdentify;
     private Integer parentComment;
 
     @OneToOne

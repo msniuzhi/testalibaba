@@ -10,6 +10,7 @@ import org.example.entity.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,80 +24,88 @@ public class CommentController {
 
     private final CommentRepository commentRepository;
     private final CommentSetRepository commentSetRepository;
-    private final ReplyRepository replyRepository;
+
 
     @Autowired
-    public CommentController(CommentRepository commentRepository, CommentSetRepository commentSetRepository, ReplyRepository replyRepository) {
+    public CommentController(CommentRepository commentRepository, CommentSetRepository commentSetRepository) {
         this.commentRepository = commentRepository;
         this.commentSetRepository = commentSetRepository;
-        this.replyRepository = replyRepository;
     }
 
-    @GetMapping("/listall")
-    public Result<List<Comment>> getAllcomment() {
 
-        List<Comment> comments= commentRepository.findAll();
-        System.out.println("调用获取所有");
+//    查询所有评论
+    @GetMapping("/listall")
+    public Result<?> getAllcomment() {
+
+        List<CommentSet> comments= commentSetRepository.findAll();
+        System.out.println("调用/listall成功");
         return Result.success(comments);
     }
 
+//    根据商品查询评论
     @RequestMapping("/listcomment/{ShopId}")
     public Result<?> getCommentByShopId(@PathVariable Long ShopId) {
 
-        List<Comment> comments= commentRepository.findByShopIdAndCommentLevel(ShopId,null);
+    List<Comment> comments = commentRepository.findByShopId(ShopId);
+    System.out.println("调用评论由货物id");
+    return Result.success(comments);
 
 
-        System.out.println("调用评论由货物id");
-        return Result.success(comments);
+
+
+
+
     }
 
+
+//    插入新评论
     @RequestMapping("/savecomment")
     public Result<?> savecomment(@RequestBody CommentSet commentSet) {
+
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedNow = now.format(formatter);
 
-
+        if (commentSet.getCommentTime()==null){
         commentSet.setCommentTime(formattedNow);
-      commentSet.setUpdateTime(formattedNow);
-      commentSet.setCreateTime(formattedNow);
+        }
+        commentSet.setUpdateTime(formattedNow);
+
+        commentSet.setCreateTime(formattedNow);
+        if (commentSet.getCommentLike()==null){
         commentSet.setCommentLike(0);
-        commentSet.setCommentIdentify(1);
-
-
-
-
+        }
      commentSetRepository.save(commentSet);
-
        return Result.success();
+
+
     }
 
     @RequestMapping("/delete/{commentId}")
     public Result<?> deleteCommentById(@PathVariable Long commentId) {
+
         Comment comments = commentRepository.findByCommentId(commentId);
 
         Integer id = Math.toIntExact(commentId);
         if(null == comments){
-            return Result.error("2","id不存在");
+            return Result.error("-1","id不存在");
         }else{
             commentRepository.deleteById(id);
         }
         return Result.success();
+
     }
 
     @RequestMapping("/updatecomment")
     public Result<?> updatecomment(@RequestBody CommentSet commentSet) {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedNow = now.format(formatter);
 
-        commentSet.setUpdateTime(formattedNow);
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedNow = now.format(formatter);
+            commentSet.setUpdateTime(formattedNow);
+            commentSetRepository.save(commentSet);
+            return Result.success();
 
-
-        commentSetRepository.save(commentSet);
-
-        return Result.success();
     }
-
 
 }

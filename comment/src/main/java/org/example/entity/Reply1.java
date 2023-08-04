@@ -31,6 +31,13 @@ public class Reply1 {
     @OneToOne
     @JoinColumn(name = "userId")
     private User user;
+
+    @OneToOne
+    @JoinColumn(name = "businessId")
+    private Business business;
+
+
+
     private String commentText;
 
 

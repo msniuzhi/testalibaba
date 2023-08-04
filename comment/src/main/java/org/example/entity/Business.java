@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Data
-@Table(name = "shop")
-public class Shop {
+@Table(name = "business")
+public class Business {
 
     @Id
     private Integer id;
